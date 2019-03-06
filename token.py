@@ -1,5 +1,4 @@
 import urllib
-import webbrowser
 import oauth2 as oauth
 import tconfig
 
@@ -43,9 +42,14 @@ class TwitterOauth:
 
 if __name__ == '__main__':
 
+    ###############################################################################
+    CONSUMER_KEY = "<< your API key >>"            # ここに API key を設定する
+    CONSUMER_SECRET = "<< your API secret key >>"  # ここに API secret key を設定する
+    ###############################################################################
+
     t = TwitterOauth(CONSUMER_KEY, CONSUMER_SECRET)
     authenticate_url = t.get_authenticate_url()  # 認証ページのURLを取得する
-    webbrowser.open(authenticate_url)            # ブラウザで認証ページを開く
+    print(authenticate_url)            # ブラウザで認証ページを開く
 
     print("PIN? >> ", end="")
     pin = int(input())
