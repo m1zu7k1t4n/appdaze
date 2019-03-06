@@ -1,6 +1,5 @@
 import urllib
 import oauth2 as oauth
-import tconfig
 
 
 class TwitterOauth:
@@ -43,8 +42,8 @@ class TwitterOauth:
 if __name__ == '__main__':
 
     ###############################################################################
-    CONSUMER_KEY = "<< your API key >>"            # ここに API key を設定する
-    CONSUMER_SECRET = "<< your API secret key >>"  # ここに API secret key を設定する
+    CONSUMER_KEY = "API Key"            # ここに API key を設定する
+    CONSUMER_SECRET = "API Secret"  # ここに API secret key を設定する
     ###############################################################################
 
     t = TwitterOauth(CONSUMER_KEY, CONSUMER_SECRET)
@@ -60,3 +59,8 @@ if __name__ == '__main__':
     s = "ACCESS TOKEN        = {}\nACCESS TOKEN SECRET = {}"
     s = s.format(access_token, access_token_secret)
     print(s)
+    with open("config.py", mode='w') as f:
+        f.write("CONSUMER_KEY = '{}'\n".format(CONSUMER_KEY))
+        f.write("CONSUMER_SECRET = '{}'\n".format(CONSUMER_SECRET))
+        f.write("ACCESS_TOKEN = '{}'\n".format(access_token))
+        f.write("ACCESS_TOKEN_SECRET = '{}'\n".format(access_token_secret))
