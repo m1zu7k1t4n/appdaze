@@ -2,7 +2,7 @@ import json
 import config
 from requests_oauthlib import OAuth1Session
 
-target_user = 'arasan01_me'
+target_user = ''
 
 CK = config.CONSUMER_KEY
 CS = config.CONSUMER_SECRET
