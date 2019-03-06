@@ -2,7 +2,7 @@ import json
 import config
 from requests_oauthlib import OAuth1Session
 
-target_user = 'shqru_mix'
+target_user = 'arasan01_me'
 
 CK = config.CONSUMER_KEY
 CS = config.CONSUMER_SECRET
@@ -21,36 +21,48 @@ id_params = {
 req = twitter.get(follow_url, params=id_params)
 
 if req.status_code == 200:
-    ids_str = ','.join(json.loads(req.text)['ids'])
+    ids = json.loads(req.text)['ids']
 else:
     print("ERROR: %d" % req.status_code)
 
 lookup_url = "https://api.twitter.com/1.1/friendships/lookup.json"
 
-lk_params = {
-    'user_id': ids_str
-}
+for i in range(len(ids)//100):
+    ids_str = ','.join(ids[i*100:(i+1)*100])
 
-req = twitter.get(lookup_url, params=lk_params)
-lookups = None
-if req.status_code == 200:
-    lookups = json.loads(req.text)
-else:
-    print("ERROR: %d" % req.status_code)
-
-remove_list = []
-
-for lookup in lookups:
-    connections = lookup['connections']
-    if (not 'followed_by' in connections) and ('following' in connections):
-        remove_list.append(lookup['id_str'])
-
-remove_url = "https://api.twitter.com/1.1/friendships/destroy.json"
-
-for rem_id in remove_list[:1]:
-    rem_params = {
-        'user_id': rem_id
+    lk_params = {
+        'user_id': ids_str
     }
-    req = twitter.post(remove_url, data=rem_params)
-    name = json.loads(req.text)['name']
-    print('removed {0}'.format(name))
+
+    req = twitter.get(lookup_url, params=lk_params)
+    lookups = None
+    if req.status_code == 200:
+        lookups = json.loads(req.text)
+    else:
+        print("ERROR: %d" % req.status_code)
+
+    remove_list = []
+
+    for lookup in lookups:
+        connections = lookup['connections']
+        if (not 'followed_by' in connections) and ('following' in connections):
+            remove_list.append(lookup['id_str'])
+
+    remove_url = "https://api.twitter.com/1.1/friendships/destroy.json"
+
+    for rem_id in remove_list:
+        rem_params = {
+            'user_id': rem_id
+        }
+        req = twitter.post(remove_url, data=rem_params)
+        name = json.loads(req.text)['name']
+        print('removed {0}'.format(name))
+
+    follow_url = "https://api.twitter.com/1.1/friendships/create.json"
+    for rem_id in remove_list:
+        rem_params = {
+            'user_id': rem_id
+        }
+        req = twitter.post(follow_url, data=rem_params)
+        name = json.loads(req.text)['name']
+        print('following {0}'.format(name))
